@@ -51,10 +51,10 @@ async function notificar({ pedidoId, nombre, telefono, email, direccion, items, 
       <!-- CLIENTE -->
       <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:18px;border-left:4px solid #1a6dbf">
         <h3 style="margin:0 0 10px;color:#1a6dbf;font-size:13px;text-transform:uppercase;letter-spacing:1px">👤 Datos del Cliente</h3>
-        <p style="margin:4px 0;font-size:15px"><strong>${nombre}</strong></p>
-        <p style="margin:4px 0;font-size:14px;color:#555">📞 ${telefono}</p>
-        ${email ? `<p style="margin:4px 0;font-size:14px;color:#555">📧 ${email}</p>` : ""}
-        <p style="margin:4px 0;font-size:14px;color:#555">📍 ${tipoEntrega === "retiro" ? "<strong style='color:#2e7d32'>RETIRO EN TIENDA 🏪</strong>" : direccion}</p>
+        <p style="margin:4px 0;font-size:13px"><strong>${nombre}</strong></p>
+        <p style="margin:4px 0;font-size:12px;color:#555">📞 ${telefono}</p>
+        ${email ? `<p style="margin:4px 0;font-size:12px;color:#555">📧 ${email}</p>` : ""}
+        <p style="margin:4px 0;font-size:12px;color:#555">📍 ${tipoEntrega === "retiro" ? "<strong style='color:#2e7d32'>RETIRO EN TIENDA 🏪</strong>" : direccion}</p>
       </div>
 
       <!-- PRODUCTOS -->
@@ -87,7 +87,7 @@ async function notificar({ pedidoId, nombre, telefono, email, direccion, items, 
 
     <!-- FOOTER -->
     <div style="background:#f0f4f8;padding:16px;text-align:center;border-top:1px solid #e0e0e0">
-      <p style="margin:0;font-size:12px;color:#999">PuntoBío — Importadora Lemarc SPA</p>
+      <p style="margin:0;font-size:12px;color:#999">PuntoBío</p>
       <p style="margin:4px 0 0;font-size:11px;color:#bbb">Este es un correo automático de notificación de pedidos</p>
     </div>
 
