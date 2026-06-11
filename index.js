@@ -123,7 +123,7 @@ app.post("/pagar", async (req, res) => {
       body: JSON.stringify({
         items: items.map(i => ({ id: String(i.id), title: `${i.nombre} ${i.litros}L`, quantity: 1, unit_price: i.precioPorLitro * i.litros, currency_id: "CLP" }))
           .concat(envio > 0 ? [{ id: "envio", title: "Costo de envio", quantity: 1, unit_price: envio, currency_id: "CLP" }] : []),
-        payer: { name: nombre, email: email || "cliente@puntobio.cl", phone: { number: telefono } },
+        payer: { name: nombre, email: email || "dahumada1926@gmail.com", phone: { number: telefono } },
         external_reference: pedidoId,
         back_urls: {
           success: `https://puntobio-vending.vercel.app/?status=approved&pedido=${pedidoId}`,
