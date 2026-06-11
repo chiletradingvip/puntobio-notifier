@@ -141,10 +141,50 @@ app.post("/pagar", async (req, res) => {
 // Webhook MP → notificar cuando pago aprobado con tarjeta
 app.post("/mp-webhook", async (req, res) => {
   try {
-    const datos = req.body;
-    console.log("MP webhook recibido:", datos.pedidoId);
-    await enviarCorreo({ ...datos, metodoPago: datos.metodoPago || "Tarjeta (Mercado Pago)" });
-    return res.json({ ok: true });
+    const body = req.body;
+    console.log("MP webhook recibido:", JSON.stringify(body).slice(0, 200));
+
+    // Formato de MP: { type: "payment", data: { id: "123" } }
+    if (body.type === "payment" && body.data?.id) {
+      const paymentId = body.data.id;
+      // Consultar el pago a MP para obtener detalles
+      const payRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+        headers: { Authorization: `Bearer ${MP_ACCESS_TOKEN}` }
+      });
+      const payment = await payRes.json();
+      console.log("Payment status:", payment.status, "ref:", payment.external_reference);
+
+      if (payment.status === "approved") {
+        const pedidoId = payment.external_reference || paymentId;
+        const total = payment.transaction_amount || 0;
+        const nombre = payment.payer?.first_name || "Cliente";
+        const email = payment.payer?.email || "";
+        const telefono = payment.payer?.phone?.number || "-";
+
+        await enviarCorreo({
+          pedidoId,
+          nombre,
+          telefono,
+          email,
+          direccion: "-",
+          items: [{ nombre: "Productos PuntoBío", litros: 1, precioPorLitro: total }],
+          total,
+          envio: 0,
+          metodoPago: "Tarjeta (Mercado Pago)",
+          tipoEntrega: "despacho"
+        });
+      }
+      return res.sendStatus(200);
+    }
+
+    // Formato interno desde App (cuando MP redirige al cliente)
+    if (body.pedidoId) {
+      console.log("Webhook interno:", body.pedidoId);
+      await enviarCorreo({ ...body, metodoPago: body.metodoPago || "Tarjeta (Mercado Pago)" });
+      return res.json({ ok: true });
+    }
+
+    return res.sendStatus(200);
   } catch (e) {
     console.error("Webhook error:", e.message);
     return res.status(500).json({ ok: false });
