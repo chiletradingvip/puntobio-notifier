@@ -135,6 +135,7 @@ app.post("/pagar", async (req, res) => {
       }),
     });
     const data = await response.json();
+    console.log("MP respuesta:", JSON.stringify(data));
     if (data.init_point) {
       return res.json({ ok: true, url: data.init_point });
     }
