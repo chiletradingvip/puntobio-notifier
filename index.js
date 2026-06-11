@@ -136,13 +136,25 @@ app.post("/pagar", async (req, res) => {
     });
     const data = await response.json();
     if (data.init_point) {
-      notificar({ pedidoId, nombre, telefono, email, direccion, items, total, envio: envio || 0, metodoPago, tipoEntrega }).catch(console.error);
       return res.json({ ok: true, url: data.init_point });
     }
     return res.status(500).json({ ok: false, error: "No se pudo crear el pago" });
   } catch (error) {
     console.error("MP error:", error.message);
     return res.status(500).json({ ok: false, error: "Error interno" });
+  }
+});
+
+// Webhook MP - se llama cuando cliente vuelve con status=approved
+app.post("/mp-webhook", async (req, res) => {
+  try {
+    const { pedidoId, nombre, telefono, email, direccion, items, total, envio, metodoPago, tipoEntrega } = req.body;
+    if (!pedidoId) return res.status(400).json({ ok: false });
+    await notificar({ pedidoId, nombre, telefono, email, direccion, items, total, envio: envio || 0, metodoPago: metodoPago || "Tarjeta (Mercado Pago)", tipoEntrega });
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error("Webhook error:", e.message);
+    return res.status(500).json({ ok: false });
   }
 });
 
